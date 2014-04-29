@@ -1,3 +1,3 @@
 class MockSelection():
-	def process(self, population):
-		population = population[:20]
+    def process(self, population):
+        population = population[:20]
