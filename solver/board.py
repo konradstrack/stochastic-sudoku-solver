@@ -25,3 +25,14 @@ class Board():
 
     def shape(self):
         return self._board.shape
+
+    def get_row(self, row_number):
+        return self._board[row_number, :]
+
+    def get_column(self, col_number):
+        return self._board[:, col_number]
+
+    def get_square(self, row, col):
+        r1 = row * 3
+        c1 = col * 3
+        return self._board[r1:r1 + 3, c1:c1 + 3]
