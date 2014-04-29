@@ -8,4 +8,5 @@ setup(name='Stochastic Sudoku Solver',
       author='Konrad Strack',
       url='https://github.com/konradstrack/stochastic-sudoku-solver',
       packages=['solver'],
+      requires=['numpy'],
 )
