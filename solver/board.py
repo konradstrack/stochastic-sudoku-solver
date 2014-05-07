@@ -36,3 +36,16 @@ class Board():
         r1 = row * 3
         c1 = col * 3
         return self._board[r1:r1 + 3, c1:c1 + 3]
+
+    def __str__(self):
+        rows = []
+        for r, row in enumerate(self._board):
+            if not r % 3 and r in range(1, 8):
+                rows.append('-' * 11)
+
+            parts = zip(*[iter(row)] * 3)
+            str_parts = ["{0}{1}{2}".format(*part) for part in parts]
+            rows.append('|'.join(str_parts))
+
+        return '\n'.join(rows)
+
