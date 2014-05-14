@@ -79,19 +79,11 @@ class SquareCrossover():
   		split = random.randint(0, squares_num) 
 
   		for i in xrange(split):
-  			row_num, col_num = self.__get_indices(i)
+  			row_num, col_num = board.get_square_indices(i)
   			board.set_square(row_num, col_num, p1.board.get_square(row_num, col_num))
   		for i in xrange(split, p1.board.shape()[1]):
-  			row_num, col_num = self.__get_indices(i)
+  			row_num, col_num = board.get_square_indices(i)
   			board.set_square(row_num, col_num, p1.board.get_square(row_num, col_num))
   		
   		genotype = BoardGenotype(board)
   		return genotype
-
-  	def __get_indices(self, i):
-  		'''Get row and column indices for a square with number i.
-  		The numbering of the squares goes:
-  		[0|1|2]
-  		[3|4|5]
-  		[6|7|8]'''
-  		return (i / 3, i % 3)

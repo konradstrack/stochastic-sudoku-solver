@@ -47,3 +47,11 @@ class Board():
         r1 = row * 3
         c1 = col * 3
         self._board[r1:r1 + 3, c1:c1 + 3] = square
+
+    def get_square_indices(self, i):
+        '''Get row and column indices for a square with number i.
+        The numbering of the squares goes:
+        [0|1|2]
+        [3|4|5]
+        [6|7|8]'''
+        return (i / 3, i % 3)
