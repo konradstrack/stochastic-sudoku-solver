@@ -28,8 +28,4 @@ class SingleSwapMutation():
 		genotype.board[p1_r, p1_c] = genotype.board[p2_r, p2_c]
 		genotype.board[p2_r, p2_c] = tmp
 
-
-
-
-
-
+# TODO: Switching rows, cols, squares

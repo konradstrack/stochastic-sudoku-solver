@@ -36,6 +36,7 @@ class SumEvaluation():
 
 		return error
 
+#TODO: Add penalty for messing up invariants. OR just omit them while mutating 
 class ErrorEvaluation():
 	def process(self, population):
 		for genotype in population:
@@ -61,8 +62,6 @@ class ErrorEvaluation():
 				if count > 1:
 					error += count - 1
 
-		error /= (rows * 2)
+		error /= (rows + cols)
 		return error
-
-
 			
