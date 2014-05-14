@@ -36,3 +36,14 @@ class Board():
         r1 = row * 3
         c1 = col * 3
         return self._board[r1:r1 + 3, c1:c1 + 3]
+
+    def set_row(self, row_number, row):
+        self._board[row_number, :] = row
+
+    def set_column(self, col_number, col):
+        self._board[:, col_number] = col
+
+    def set_square(self, row, col, square):
+        r1 = row * 3
+        c1 = col * 3
+        self._board[r1:r1 + 3, c1:c1 + 3] = square
