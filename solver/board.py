@@ -23,6 +23,9 @@ class Board():
         x, y = position
         self._board[x, y] = value
 
+    def __iter__(self):
+        return iter(self._board)
+
     def shape(self):
         return self._board.shape
 
@@ -37,6 +40,34 @@ class Board():
         c1 = col * 3
         return self._board[r1:r1 + 3, c1:c1 + 3]
 
+    def set_row(self, row_number, row):
+        self._board[row_number, :] = row
+
+    def set_column(self, col_number, col):
+        self._board[:, col_number] = col
+
+    def set_square(self, row, col, square):
+        r1 = row * 3
+        c1 = col * 3
+        self._board[r1:r1 + 3, c1:c1 + 3] = square
+
+    def get_square_indices(self, i):
+        '''Row and column indices for a square with number i.
+        The numbering of the squares goes:
+        [0|1|2]
+        [3|4|5]
+        [6|7|8]'''
+        return (i / 3, i % 3)
+
+    def get_indices(self, i):
+        '''Row and column indices for field with number i.
+        The numbering of the fields goes:
+        [0 | 1|..| 8]
+        [9 |10|..|17]
+        [     ..    ]
+        [72|73|..|80]'''
+        return (i / self.shape()[1], i % self.shape()[1])
+
     def __str__(self):
         rows = []
         for r, row in enumerate(self._board):
@@ -48,4 +79,3 @@ class Board():
             rows.append('|'.join(str_parts))
 
         return '\n'.join(rows)
-
