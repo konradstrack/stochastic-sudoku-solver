@@ -41,15 +41,19 @@ class Board():
         return self._board[r1:r1 + 3, c1:c1 + 3]
 
     def set_row(self, row_number, row):
-        self._board[row_number, :] = row
+        for i in xrange(self.shape()[1]):
+            self._board[row_number, i] = row[i] 
 
     def set_column(self, col_number, col):
-        self._board[:, col_number] = col
+        for i in xrange(self.shape()[0]):
+            self._board[i, col_number] = col[i]
 
     def set_square(self, row, col, square):
         r1 = row * 3
         c1 = col * 3
-        self._board[r1:r1 + 3, c1:c1 + 3] = square
+        for i in xrange(3):
+            for j in xrange(3):
+                self._board[r1 + i, c1 + j] = square[i,j]
 
     def set_invariants(self):
         """Sets invariants to current setting."""
