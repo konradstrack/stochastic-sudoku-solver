@@ -23,7 +23,7 @@ class BaseBoardGenerator(object):
 			board = self.__generate_board()
 			self.__remove_percentage(board, 1 - fill_portion)
 			board.set_invariants()
-			generated_boards.append()
+			generated_boards.append(board)
 		return generated_boards
 
 	def __generate_board(self):
@@ -37,8 +37,8 @@ class BaseBoardGenerator(object):
 		num_fields = rows * cols
 		to_remove = int(num_fields * to_remove_percentage)
 
-		for i in random.choice(range(num_fields), to_remove):
-			(r, c) = board.get_indexes(i)
+		for i in random.sample(range(num_fields), to_remove):
+			(r, c) = board.get_indices(i)
 			board[r, c] = 0
 
 
