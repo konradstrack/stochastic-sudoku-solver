@@ -30,7 +30,6 @@ class BaseBoardGenerator(object):
 	def __generate_board(self):
 		board = copy.deepcopy(random.choice(self.boards))
 		permutation = getattr(self, self.PERMUTATIONS[random.randrange(len(self.PERMUTATIONS))])
-		# permutation = getattr(self, self.PERMUTATIONS[1])
 		permutation(board)
 		return board
 
@@ -45,6 +44,9 @@ class BaseBoardGenerator(object):
 
 
 	def cols_of_squares(self, board):
+		"""
+		Permutes columns of squares.
+		"""
 		permute = [0,1,2]
 		random.shuffle(permute)
 
@@ -58,6 +60,9 @@ class BaseBoardGenerator(object):
 
 
 	def rows_of_squares(self, board):
+		"""
+		Permutes rows of squares.
+		"""
 		permute = [0,1,2]
 		random.shuffle(permute)
 
@@ -69,7 +74,30 @@ class BaseBoardGenerator(object):
 				board.set_row(3 * i + j, as_rows_of_squares[row_of_squares][j])
 
 	def columns_of_cells(self, board):
-		pass
+		"""
+		Permutes columns of cells within single column of squares.
+		"""
+
+		col_of_squares = random.randrange(3)
+		permute = [0,1,2]
+		random.shuffle(permute)
+		begin = col_of_squares * 3
+		cols = [numpy.copy(board.get_column(i)) for i in xrange(begin, begin+3)]
+
+		for i, col in enumerate(permute):
+			board.set_column(begin + i, cols[col])
+
+
 
 	def rows_of_cells(self, board):
-		pass
+		"""
+		Permutes rows of cells within single row of squares.
+		"""
+		row_of_squares = random.randrange(3)
+		permute = [0,1,2]
+		random.shuffle(permute)
+		begin = row_of_squares * 3
+		rows = [numpy.copy(board.get_row(i)) for i in xrange(begin, begin+3)]
+
+		for i, row in enumerate(permute):
+			board.set_row(begin + i, rows[row])
