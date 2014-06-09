@@ -6,13 +6,13 @@ import numpy as np
 class Board():
     def __init__(self, initial_board=None):
         self._board = np.zeros(shape=(9, 9), dtype='i')
-        self.invariants = []
+        self.invariants = {}
 
         if initial_board is not None:
             for r, row in enumerate(initial_board[:9]):
                 for c, col in enumerate(row[:9]):
                     if col != 0:
-                        self.invariants.append((r, c))
+                        self.invariants[(r, c)] = col
                         self._board[r, c] = col
 
     def __getitem__(self, position):
@@ -79,3 +79,9 @@ class Board():
             rows.append('|'.join(str_parts))
 
         return '\n'.join(rows)
+
+class InvariantsFixer(object):
+    @staticmethod
+    def fix_invariants(genotype):
+        for (r, c), val in genotype.invariants.items():
+            genotype[r][c] = val

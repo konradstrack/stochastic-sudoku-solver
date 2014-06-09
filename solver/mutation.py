@@ -1,4 +1,5 @@
 import random
+from board import InvariantsFixer
 
 class MockMutation():
     def __init__(self, probability):
@@ -11,9 +12,11 @@ class MockMutation():
     def __mutate(self, genotype):
         pass
 
-#TODO: Przemyslec i przedyskutowac invariants
 
 class SingleSwapMutation():
+	"""
+	Swaps values of two random fields. Omits invariants.
+	"""
 	def __init__(self, probability = 1.0):
 		self.probability = probability
 
@@ -24,14 +27,25 @@ class SingleSwapMutation():
 	
 	def __mutate(self, genotype):
 		(rows, cols) = genotype.board.shape()
-		(p1, p2) = random.sample(xrange(rows * cols), 2)
-		(p1_r, p1_c) = genotype.board.get_indices(p1)
-		(p2_r, p2_c) = genotype.board.get_indices(p2)
+		
+		p1 = None
+		p2 = None
+
+		while not p1 and not p2 or (p1_r, p1_c) in genotype.invariants or (p2_r, p2_c) in genotype.invariants:
+			(p1, p2) = random.sample(xrange(rows * cols), 2)
+			(p1_r, p1_c) = genotype.board.get_indices(p1)
+			(p2_r, p2_c) = genotype.board.get_indices(p2)
+			if (p1_r, p1_c) in genotype.invariants or (p2_r, p2_c) in genotype.invariants:
+				print "inv"
+
 		tmp = genotype.board[p1_r, p1_c]
 		genotype.board[p1_r, p1_c] = genotype.board[p2_r, p2_c]
 		genotype.board[p2_r, p2_c] = tmp
 
 class SingleRowSwapMutation():
+	"""
+	Swaps two random rows. Fixes invariants after mutating.
+	"""
 	def __init__(self, probability = 1.0):
 		self.probability = probability
 
@@ -39,6 +53,7 @@ class SingleRowSwapMutation():
 		for genotype in population:
 			if random.random() < self.probability:
 				self.__mutate(genotype)
+				InvariantsFixer.fix_invariants(genotype)
 
 	def __mutate(self, genotype):
 		(rows, cols) = genotype.board.shape()
@@ -47,7 +62,11 @@ class SingleRowSwapMutation():
 		genotype.board.set_row(r1, genotype.board.get_row(r2))
 		genotype.board.set_row(r2, tmp)
 
+
 class SingleColumnSwapMutation():
+	"""
+	Swaps two random squares. Fixes invariants after mutating.
+	"""
 	def __init__(self, probability = 1.0):
 		self.probability = probability
 
@@ -55,6 +74,7 @@ class SingleColumnSwapMutation():
 		for genotype in population:
 			if random.random() < self.probability:
 				self.__mutate(genotype)
+				InvariantsFixer.fix_invariants(genotype)
 
 	def __mutate(self, genotype):
 		(rows, cols) = genotype.board.shape()
@@ -64,6 +84,9 @@ class SingleColumnSwapMutation():
 		genotype.board.set_column(c2, tmp)
 
 class SingleSquareSwapMutation():
+	"""
+	Swaps two random squares. Fixes invariants after mutating.
+	"""
 	def __init__(self, probability = 1.0):
 		self.probability = probability
 
@@ -71,6 +94,7 @@ class SingleSquareSwapMutation():
 		for genotype in population:
 			if random.random() < self.probability:
 				self.__mutate(genotype)
+				InvariantsFixer.fix_invariants(genotype)
 
 	def __mutate(self, genotype):
 		(rows, cols) = genotype.board.shape()
@@ -80,5 +104,3 @@ class SingleSquareSwapMutation():
 		tmp = genotype.board.get_square(s1_r, s1_c)
 		genotype.board.set_square(s1_c, s1_r, genotype.board.get_square(s2_c, s2_r))
 		genotype.board.set_square(s2_c, s2_r, tmp)
-
-# TODO: Switching rows, cols, squares
