@@ -1,4 +1,5 @@
 from solver.board import Board
+import numpy
 import copy
 import random
 
@@ -29,6 +30,7 @@ class BaseBoardGenerator(object):
 	def __generate_board(self):
 		board = copy.deepcopy(random.choice(self.boards))
 		permutation = getattr(self, self.PERMUTATIONS[random.randrange(len(self.PERMUTATIONS))])
+		# permutation = getattr(self, self.PERMUTATIONS[1])
 		permutation(board)
 		return board
 
@@ -43,10 +45,28 @@ class BaseBoardGenerator(object):
 
 
 	def cols_of_squares(self, board):
-		pass
+		permute = [0,1,2]
+		random.shuffle(permute)
+
+		as_cols_of_squares = [[numpy.copy(board.get_column(i)) for i in xrange(begin, begin+3)] for begin in [0,3,6]]
+
+
+		for (i, col_of_squares) in enumerate(permute):
+			for j in xrange(3):
+				board.set_column(3 * i + j, as_cols_of_squares[col_of_squares][j])
+
+
 
 	def rows_of_squares(self, board):
-		pass
+		permute = [0,1,2]
+		random.shuffle(permute)
+
+		as_rows_of_squares = [[numpy.copy(board.get_row(i)) for i in xrange(begin, begin+3)] for begin in [0,3,6]]
+
+
+		for (i, row_of_squares) in enumerate(permute):
+			for j in xrange(3):
+				board.set_row(3 * i + j, as_rows_of_squares[row_of_squares][j])
 
 	def columns_of_cells(self, board):
 		pass
