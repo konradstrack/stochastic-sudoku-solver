@@ -15,8 +15,11 @@ class SumEvaluation():
 			genotype.fitness = self.__evaluate(genotype.board)
 
 	def __evaluate(self, board):
-		"""Evaluation based on differences between a perfect sum 
-			(for a correct filling) and actual sum in columns and rows"""
+		"""
+		Evaluation based on differences between a perfect sum 
+		(for a correct filling) and actual sum in columns and rows.
+		Assumes we are working on filled boards.
+		"""
 		(rows, cols) = board.shape()
 		perfect_sum = (1 + rows) * rows / 2
 		error = 0
@@ -36,32 +39,37 @@ class SumEvaluation():
 
 		return error
 
-#TODO: Add penalty for messing up invariants. OR just omit them while mutating 
 class ErrorEvaluation():
 	def process(self, population):
 		for genotype in population:
 			genotype.fitness = self.__evaluate(genotype.board)
 
 	def __evaluate(self, board):
-		"""Evaluation based on differences between a perfect sum 
-			(for a correct filling) and actual sum in columns and rows"""
+		"""
+		Evaluation based on number of errors (multiple values of same number) 
+		(for a correct filling) and actual sum in columns, rows and squares.
+		Assumes we are working on filled boards.
+		"""
 		(rows, cols) = board.shape()
-		error = 0
+		squares = rows * cols / 9
+		errors = 0
 
-		for i in xrange(rows):
-			row = board.get_row(i)
-			row_counts = np.bincount(row)
-			for count in row_counts:
+		errors += self.__get_errors(board, board.get_row, rows)
+		errors += self.__get_errors(board, board.get_column, cols)
+		errors += self.__get_errors(board, lambda i : board.get_square(*board.get_square_indices(i)), squares)
+
+		errors /= (rows + cols + squares) * 1.
+		return errors
+
+	def __get_errors(self, board, get_area, num_areas):
+		area_errors = 0
+		for i in xrange(num_areas):
+			area = get_area(i).flat
+			area_counts = np.bincount(area)
+			for count in area_counts:
 				if count > 1:
-					error += count - 1
+					area_errors += count - 1
 
-		for i in xrange(cols):
-			col = board.get_column(i)
-			col_counts = np.bincount(col)
-			for count in col_counts:
-				if count > 1:
-					error += count - 1
+		return area_errors
 
-		error /= (rows + cols)
-		return error
 			
