@@ -11,29 +11,33 @@ class MockCrossover():
             population.append(BoardGenotype(Board()))
 
 class RowCrossover():
-	'''Splits boards by rows'''
-	def __init__(self, final_size):
+    '''Splits boards by rows'''
+    def __init__(self, final_size):
 		self.final_size = final_size
 
-	def process(self, population):
+    def process(self, population):
 		parents = list(population)
 		for i in xrange(self.final_size - len(population)):
 			p1, p2 = random.sample(parents, 2)
 			genotype = self.cross(p1, p2)
 			population.append(genotype)
 
-  	def cross(self, p1, p2):
-  		board = Board()
-  		board.invariants = p1.board.invariants
-  		split = random.randint(0, p1.board.shape()[0]) 
+    def cross(self, p1, p2):
+        board = Board()
+        split = random.randint(0, p1.board.shape()[0])
 
-  		for i in xrange(split):
+        for i in xrange(split):
   			board.set_row(i, p1.board.get_row(i))
-  		for i in xrange(split, p1.board.shape()[0]):
+        for i in xrange(split, p1.board.shape()[0]):
   			board.set_row(i, p2.board.get_row(i))
-  		
-  		genotype = BoardGenotype(board)
-  		return genotype
+
+        board.invariants = InvariantsMerger.merge_invariants(p1, p2, self.__area_function(split))
+
+        genotype = BoardGenotype(board)
+        return genotype
+
+    def __area_function(self, split):
+        return lambda (r,c) : r < split
 
 class ColumnCrossover():
 	'''Splits boards by columns'''
@@ -47,18 +51,22 @@ class ColumnCrossover():
 			genotype = self.cross(p1, p2)
 			population.append(genotype)
 
-  	def cross(self, p1, p2):
-  		board = Board()
-  		board.invariants = p1.board.invariants
-  		split = random.randint(0, p1.board.shape()[1]) 
+	def cross(self, p1, p2):
+		board = Board()
+		split = random.randint(0, p1.board.shape()[1]) 
 
-  		for i in xrange(split):
-  			board.set_column(i, p1.board.get_column(i))
-  		for i in xrange(split, p1.board.shape()[1]):
-  			board.set_column(i, p2.board.get_column(i))
-  		
-  		genotype = BoardGenotype(board)
-  		return genotype
+		for i in xrange(split):
+			board.set_column(i, p1.board.get_column(i))
+		for i in xrange(split, p1.board.shape()[1]):
+			board.set_column(i, p2.board.get_column(i))
+
+		board.invariants = InvariantsMerger.merge_invariants(p1, p2, self.__area_function(split))
+
+		genotype = BoardGenotype(board)
+		return genotype
+
+	def __area_function(self, split):
+		return lambda (r,c) : c < split
 
 class SquareCrossover():
 	'''Splits boards by squares'''
@@ -72,18 +80,41 @@ class SquareCrossover():
 			genotype = self.cross(p1, p2)
 			population.append(genotype)
 
-  	def cross(self, p1, p2):
-  		board = Board()
-  		board.invariants = p1.board.invariants
-  		squares_num = p1.board.shape()[0] / 3 * p2.board.shape()[1] / 3 
-  		split = random.randint(0, squares_num) 
+	def cross(self, p1, p2):
+		board = Board()
+		squares_num = p1.board.shape()[0] / 3 * p2.board.shape()[1] / 3 
+		split = random.randint(0, squares_num) 
 
-  		for i in xrange(split):
-  			row_num, col_num = board.get_square_indices(i)
-  			board.set_square(row_num, col_num, p1.board.get_square(row_num, col_num))
-  		for i in xrange(split, p1.board.shape()[1]):
-  			row_num, col_num = board.get_square_indices(i)
-  			board.set_square(row_num, col_num, p1.board.get_square(row_num, col_num))
-  		
-  		genotype = BoardGenotype(board)
-  		return genotype
+		for i in xrange(split):
+			row_num, col_num = board.get_square_indices(i)
+			board.set_square(row_num, col_num, p1.board.get_square(row_num, col_num))
+
+		for i in xrange(split, p1.board.shape()[1]):
+			row_num, col_num = board.get_square_indices(i)
+			board.set_square(row_num, col_num, p1.board.get_square(row_num, col_num))
+
+		board.invariants = InvariantsMerger.merge_invariants(p1, p2, self.__area_function(board.get_square_indices(split)))
+
+		genotype = BoardGenotype(board)
+		return genotype
+
+	def __area_function(self, square_split):
+		split_r, split_c = square_split
+		split_r = split_r * 3
+		split_c = split_c * 3
+		return lambda (r,c) : r < split_r or r < split_r + 3 and c < split_c
+
+class InvariantsMerger(object):
+    @classmethod
+    def merge_invariants(cls, board1, board2, area_function):
+        """
+        Merges the invariants of board 1 and board2 using area_function.
+        The resulting invariants contain invariants of board1 that are in first area 
+        and invariants of board2 that are in the second area. 
+        Area_function returns true if given point p = (r,c) is in the first area and false otherwise.
+        """
+        invariants = {}
+        invariants.update({p : v for p, v in board1.invariants if area_function(p)})
+        invariants.update({p : v for p, v in board2.invariants if not area_function(p)})
+
+        return invariants
