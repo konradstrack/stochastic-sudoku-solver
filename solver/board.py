@@ -51,6 +51,11 @@ class Board():
         c1 = col * 3
         self._board[r1:r1 + 3, c1:c1 + 3] = square
 
+    def set_invariants(self):
+        """Sets invariants to current setting."""
+        (rows, cols) = self.shape()
+        invariants = {(r, c) : self[r,c] for r in xrange(rows) for c in xrange(cols) if self[r,c] != 0}
+
     def get_square_indices(self, i):
         '''Row and column indices for a square with number i.
         The numbering of the squares goes:
