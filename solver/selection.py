@@ -1,16 +1,18 @@
 import random
 
+
 class MockSelection():
     def process(self, population):
         population = population[:20]
 
-#TODO: Dodac prawdopodobienstwo p, za opisem na wikipedii 
+
+#TODO: Dodac prawdopodobienstwo p, za opisem na wikipedii
 #http://en.wikipedia.org/wiki/Tournament_selection 
 class TournamentSelection():
     def __init__(self, tournaments_number=20, tournament_size=20):
-    	'''tournaments_number is the number of tournaments that take place
-    	tournament_size is the size of each tournament
-    	the population after selection has tournaments_number genotypes'''
+        '''tournaments_number is the number of tournaments that take place
+        tournament_size is the size of each tournament
+        the population after selection has tournaments_number genotypes'''
         self.tournaments_number = tournaments_number
         self.tournament_size = tournament_size
 

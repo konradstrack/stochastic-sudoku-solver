@@ -3,7 +3,7 @@ class BoardGenotype():
         self.board = board
         self.fitness = None
 
-    def __getattr__(self,name):
-    	"""Forward methods to board. AttributeError will be raised fo unknown methods. """
-    	attr = getattr(self.board, name)
-    	return attr
+    def __getattr__(self, name):
+        """Forward methods to board. AttributeError will be raised fo unknown methods. """
+        attr = getattr(self.board, name)
+        return attr

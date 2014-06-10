@@ -41,24 +41,24 @@ class Board():
         return self._board[r1:r1 + 3, c1:c1 + 3]
 
     def set_row(self, row_number, row):
-        for i in xrange(self.shape()[1]):
+        for i in range(self.shape()[1]):
             self._board[row_number, i] = row[i] 
 
     def set_column(self, col_number, col):
-        for i in xrange(self.shape()[0]):
+        for i in range(self.shape()[0]):
             self._board[i, col_number] = col[i]
 
     def set_square(self, row, col, square):
         r1 = row * 3
         c1 = col * 3
-        for i in xrange(3):
-            for j in xrange(3):
+        for i in range(3):
+            for j in range(3):
                 self._board[r1 + i, c1 + j] = square[i,j]
 
     def set_invariants(self):
         """Sets invariants to current setting."""
         (rows, cols) = self.shape()
-        invariants = {(r, c) : self[r,c] for r in xrange(rows) for c in xrange(cols) if self[r,c] != 0}
+        invariants = {(r, c) : self[r,c] for r in range(rows) for c in range(cols) if self[r,c] != 0}
 
     def get_square_indices(self, i):
         '''Row and column indices for a square with number i.
