@@ -18,6 +18,14 @@ def fill(board, uncertainty=1, repeat=4):
     for _ in range(repeat):
         print(boards)
         result = []
+
+        # first fill the fields that can be filled non-randomly
+        if uncertainty > 1:
+            for b in boards:
+                result.extend(fill_one(b, 1))
+            boards = result
+
+        # now fill the rest
         for b in boards:
             result.extend(fill_one(b, uncertainty))
 
