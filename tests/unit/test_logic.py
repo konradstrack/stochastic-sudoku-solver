@@ -25,5 +25,5 @@ class TestLogic():
 
         board = Board(init_board)
 
-        filled_board = fill(board)
+        filled_board = fill(board)[0]
         assert 7 == filled_board[2, 5]
