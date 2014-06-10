@@ -8,6 +8,12 @@ __author__ = 'Konrad Strack'
 
 
 def fill(board, uncertainty=1, repeat=4):
+    """Creates a list of partially filled boards out of one board. The boards are filled in a human-like way,
+    but with guessing.
+
+    @param uncertainty specifies the limit of missing values for one field
+    @param repeat specifies how many times the procedure should be repeated
+    """
     boards = [board]
     for _ in range(repeat):
         print(boards)
@@ -47,5 +53,5 @@ def fill_one(board, uncertainty=1):
 
     if len(boards) == 0:
         boards = [board]
-        
+
     return boards
