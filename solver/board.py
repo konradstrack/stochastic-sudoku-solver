@@ -58,7 +58,7 @@ class Board():
     def set_invariants(self):
         """Sets invariants to current setting."""
         (rows, cols) = self.shape()
-        invariants = {(r, c) : self[r,c] for r in range(rows) for c in range(cols) if self[r,c] != 0}
+        self.invariants = {(r, c) : self[r,c] for r in range(rows) for c in range(cols) if self[r,c] != 0}
 
     def get_square_indices(self, i):
         '''Row and column indices for a square with number i.
