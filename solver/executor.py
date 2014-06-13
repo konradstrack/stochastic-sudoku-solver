@@ -1,5 +1,6 @@
 import sys
 import random
+import itertools
 
 from board import Board
 from crossover import RowCrossover
@@ -11,9 +12,11 @@ from solver.mutation import SingleSwapMutation
 from solver.selection import MockSelection
 from solver.evaluation import SumEvaluation
 
+import logic
+
 
 class GeneticAlgorithm():
-    def __init__(self, population, steps=100):
+    def __init__(self, population, steps=1000):
         self.steps = steps
         self.population = population
         self.evaluation = SumEvaluation()
@@ -47,6 +50,18 @@ class GeneticAlgorithm():
                 return genotype
         return None
 
+class HierarchicalAlgorithm():
+    def __init__(self, boards):
+        self.boards = boards
+
+    def execute(self):
+        # self.boards = itertools.chain(*(map(logic.fill, self.boards)))
+        self.boards = map(random_fill, self.boards)
+        population = [BoardGenotype(board) for board in self.boards]
+        genetic = GeneticAlgorithm(population)
+        return genetic.execute()
+
+
 def random_fill(genotype):
     (rows, cols) = genotype.shape()
     for r in range(rows):
@@ -54,7 +69,6 @@ def random_fill(genotype):
             if genotype[r, c] == 0:
                 genotype[r, c] = random.randint(1, 9)
     return genotype
-
 
 def read_board(board_path):
     with open(board_path, 'r') as f:
@@ -84,9 +98,11 @@ if __name__ == "__main__":
     board_list = board_generator.generate(10, 0.4)
     population = [BoardGenotype(board) for board in board_list]
 
-    population = map(random_fill, population)
+    algorithm = HierarchicalAlgorithm(board_list)
 
-    algorithm = GeneticAlgorithm(population)
+    # population = map(random_fill, population)
+
+    # algorithm = GeneticAlgorithm(population)
     (output_population, solution) = algorithm.execute()
 
     print solution
