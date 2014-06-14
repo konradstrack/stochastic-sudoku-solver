@@ -1,8 +1,10 @@
 import argparse
+import configparser
+import sys
 
 from algorithm import GeneticAlgorithm
-
 from board import Board
+from registry import registry
 from generator import BaseBoardGenerator
 from genotype import BoardGenotype
 
@@ -23,8 +25,40 @@ def parse_arguments():
     return parser.parse_args()
 
 
+def build_configuration(config_path):
+    config = configparser.ConfigParser()
+    config.read_file(open(config_path))
+
+    alg_config = config['algorithm']
+
+    def get_class(group, default):
+        name = alg_config.get(group, default)
+        try:
+            cls = registry[group][name]
+            return cls
+        except KeyError as e:
+            print("Error in the config file:\nThere's no {0} for '{1}'.\nUse one of: {2}".format(e, group, ", ".join(
+                registry[group])))
+            sys.exit(1)
+
+    mutation_cls = get_class('mutation', 'mock')
+    selection_cls = get_class('selection', 'mock')
+    evaluation_cls = get_class('evaluation', 'mock')
+    crossover_cls = get_class('crossover', 'mock')
+
+    configuration = {
+        'mutation': mutation_cls,
+        'selection': selection_cls,
+        'evaluation': evaluation_cls,
+        'crossover': crossover_cls
+    }
+
+    return configuration
+
+
 if __name__ == "__main__":
     args = parse_arguments()
+    configuration = build_configuration(args.configFile)
 
     # read a board from the file
     board_path = args.boardFile

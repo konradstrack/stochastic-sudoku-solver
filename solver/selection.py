@@ -1,13 +1,16 @@
 import random
+from registry import register
 
 
+@register('selection', 'mock')
 class MockSelection():
     def process(self, population):
         population = population[:20]
 
 
 #TODO: Dodac prawdopodobienstwo p, za opisem na wikipedii
-#http://en.wikipedia.org/wiki/Tournament_selection 
+#http://en.wikipedia.org/wiki/Tournament_selection
+@register('selection', 'tournament')
 class TournamentSelection():
     def __init__(self, tournaments_number=20, tournament_size=20):
         '''tournaments_number is the number of tournaments that take place

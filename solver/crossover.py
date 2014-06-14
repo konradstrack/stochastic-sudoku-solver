@@ -1,9 +1,11 @@
 import random
 
+from registry import register
 from solver.board import Board
 from solver.genotype import BoardGenotype
 
 
+@register('crossover', 'mock')
 class MockCrossover():
     def __init__(self, final_size):
         self.final_size = final_size
@@ -13,8 +15,9 @@ class MockCrossover():
             population.append(BoardGenotype(Board()))
 
 
+@register('crossover', 'row')
 class RowCrossover():
-    '''Splits boards by rows'''
+    """Splits boards by rows"""
 
     def __init__(self, final_size):
         self.final_size = final_size
@@ -44,8 +47,9 @@ class RowCrossover():
         return lambda r, c: r < split
 
 
+@register('crossover', 'column')
 class ColumnCrossover():
-    '''Splits boards by columns'''
+    """Splits boards by columns"""
 
     def __init__(self, final_size):
         self.final_size = final_size
@@ -75,8 +79,9 @@ class ColumnCrossover():
         return lambda r, c: c < split
 
 
+@register('crossover', 'square')
 class SquareCrossover():
-    '''Splits boards by squares'''
+    """Splits boards by squares"""
 
     def __init__(self, final_size):
         self.final_size = final_size

@@ -3,8 +3,10 @@ import random
 import numpy
 
 from board import InvariantsFixer
+from registry import register
 
 
+@register('mutation', 'mock')
 class MockMutation():
     def __init__(self, probability):
         self.probability = probability
@@ -17,6 +19,7 @@ class MockMutation():
         pass
 
 
+@register('mutation', 'single-swap')
 class SingleSwapMutation():
     """
     Swaps values of two random fields. Omits invariants.
@@ -49,6 +52,7 @@ class SingleSwapMutation():
         genotype.board[p2_r, p2_c] = tmp
 
 
+@register('mutation', 'single-row-swap')
 class SingleRowSwapMutation():
     """
     Swaps two random rows. Fixes invariants after mutating.
@@ -72,6 +76,7 @@ class SingleRowSwapMutation():
         genotype.board.set_row(r2, tmp)
 
 
+@register('mutation', 'single-column-swap')
 class SingleColumnSwapMutation():
     """
     Swaps two random squares. Fixes invariants after mutating.
@@ -94,6 +99,7 @@ class SingleColumnSwapMutation():
         genotype.board.set_column(c2, tmp)
 
 
+@register('mutation', 'single-square-swap')
 class SingleSquareSwapMutation():
     """
     Swaps two random squares. Fixes invariants after mutating.

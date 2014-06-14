@@ -2,7 +2,10 @@ from math import sqrt
 
 import numpy as np
 
+from registry import register
 
+
+@register('evaluation', 'mock')
 class MockEvaluation():
     def process(self, population):
         for genotype in population:
@@ -12,6 +15,7 @@ class MockEvaluation():
         return 2
 
 
+@register('evaluation', 'sum')
 class SumEvaluation():
     def process(self, population):
         for genotype in population:
@@ -43,6 +47,7 @@ class SumEvaluation():
         return error
 
 
+@register('evaluation', 'error')
 class ErrorEvaluation():
     def process(self, population):
         for genotype in population:
