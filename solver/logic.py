@@ -7,16 +7,15 @@ import numpy as np
 __author__ = 'Konrad Strack'
 
 
-def fill(board, uncertainty=1, repeat=4):
+def fill(boards, uncertainty=1, repeat=4, limit=10):
     """Creates a list of partially filled boards out of one board. The boards are filled in a human-like way,
     but with guessing.
 
     @param uncertainty specifies the limit of missing values for one field
     @param repeat specifies how many times the procedure should be repeated
     """
-    boards = [board]
+    # boards = [board]
     for _ in range(repeat):
-        print(boards)
         result = []
 
         # first fill the fields that can be filled non-randomly
@@ -29,7 +28,8 @@ def fill(board, uncertainty=1, repeat=4):
         for b in boards:
             result.extend(fill_one(b, uncertainty))
 
-        boards = result
+        l = min(len(result), limit)
+        boards = result[:l]
 
     return boards
 

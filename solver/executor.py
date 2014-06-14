@@ -1,36 +1,10 @@
-import sys
+import argparse
+
+from algorithm import GeneticAlgorithm
 
 from board import Board
-from crossover import RowCrossover
-
 from generator import BaseBoardGenerator
 from genotype import BoardGenotype
-
-from solver.mutation import SingleSwapMutation
-from solver.selection import MockSelection
-from solver.evaluation import SumEvaluation
-
-
-class GeneticAlgorithm():
-    def __init__(self, population, steps=100):
-        self.steps = steps
-        self.population = population
-        self.evaluation = SumEvaluation()
-        self.selection = MockSelection()
-        self.crossover = RowCrossover(len(population))
-        self.mutation = SingleSwapMutation(probability=0.4)
-
-    def execute(self):
-        for i in range(self.steps):
-            self.execute_step(i)
-
-        return population
-
-    def execute_step(self, i):
-        self.evaluation.process(self.population)
-        self.selection.process(self.population)
-        self.crossover.process(self.population)
-        self.mutation.process(self.population)
 
 
 def read_board(board_path):
@@ -41,22 +15,27 @@ def read_board(board_path):
     return board
 
 
-if __name__ == "__main__":
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Genetic algorithm for solving Sudoku.')
+    parser.add_argument('-f', '--configFile', required=True, help='the algorithm configuration file')
+    parser.add_argument('-b', '--boardFile', required=True, help='path to a single Sudoku board')
 
-    if len(sys.argv) < 2:
-        print("usage:\n\t{0} [board_file]".format(sys.argv[0]))
-        sys.exit(1)
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+    args = parse_arguments()
 
     # read a board from the file
-    board_path = sys.argv[1]
+    board_path = args.boardFile
     board = read_board(board_path)
 
     # generate more boards
     base_boards = [board]
     board_generator = BaseBoardGenerator(base_boards)
+    board_list = board_generator.generate(10, 0.4)
 
     # create population
-    board_list = board_generator.generate(10, 0.4)
     population = [BoardGenotype(board) for board in board_list]
 
     algorithm = GeneticAlgorithm(population)
