@@ -1,32 +1,62 @@
-from crossover import RowCrossover
-from evaluation import SumEvaluation
-from mutation import SingleSwapMutation
-from selection import MockSelection
+from random import Random
+
+from genotype import BoardGenotype
 
 
 class GeneticAlgorithm():
-    def __init__(self, population, evaluation, selection, crossover, mutation, steps=100):
-        self.steps = steps
-        self.population = population
+    population = None
+
+    def __init__(self, evaluation, selection, crossover, mutation):
         self.evaluation = evaluation
         self.selection = selection
         self.crossover = crossover
         self.mutation = mutation
 
-    def execute(self):
-        for i in range(self.steps):
+    def execute(self, population, steps):
+        self.population = population
+        solution = None
+        self.evaluation.process(self.population)
+
+        for i in range(steps):
             self.execute_step(i)
+            solution = self.find_solution(self.population)
+            if solution is not None:
+                break
 
-            print("=" * 100, i)
-            print("=" * 100)
-            for p in self.population[:3]:
-                print(p.board)
-                print()
-
-        return self.population
+        return population, solution
 
     def execute_step(self, i):
         self.evaluation.process(self.population)
         self.selection.process(self.population)
         self.crossover.process(self.population)
         self.mutation.process(self.population)
+
+    def find_solution(self, population):
+        """
+        Check if we already found the solution.
+        """
+        for genotype in population:
+            if genotype.fitness == self.evaluation.solution_fitness():
+                return genotype
+        return None
+
+
+class HierarchicalAlgorithm():
+    def __init__(self, genetic):
+        self.genetic = genetic
+
+    def execute(self, boards, genetic_steps):
+        random = Random()
+
+        def random_fill(genotype):
+            (rows, cols) = genotype.shape()
+            for r in range(rows):
+                for c in range(cols):
+                    if genotype[r, c] == 0:
+                        genotype[r, c] = random.randint(1, 9)
+            return genotype
+
+        # self.boards = itertools.chain(*(map(logic.fill, self.boards)))
+        boards = map(random_fill, boards)
+        population = [BoardGenotype(board) for board in boards]
+        return self.genetic.execute(population=population, steps=genetic_steps)

@@ -39,13 +39,17 @@ class SingleSwapMutation():
         p1 = None
         p2 = None
 
-        while not p1 and not p2 or (p1_r, p1_c) in genotype.invariants or (p2_r, p2_c) in genotype.invariants:
-            (p1, p2) = random.sample(range(rows * cols), 2)
-            (p1_r, p1_c) = genotype.board.get_indices(p1)
-            (p2_r, p2_c) = genotype.board.get_indices(p2)
-            if (p1_r, p1_c) in genotype.invariants or (p2_r, p2_c) in genotype.invariants:
-                print
-                "inv"
+        invariants = set(genotype.invariants.keys())
+        fields = set((r, c) for r in range(rows) for c in range(cols))
+        
+        # If everything is invariant, there is nothing to swap.
+        if len(fields) - len(invariants) < 2:
+            return
+
+        (p1, p2) = random.sample(fields - invariants, 2)
+        (p1_r, p1_c) = p1
+        (p2_r, p2_c) = p2
+
 
         tmp = genotype.board[p1_r, p1_c]
         genotype.board[p1_r, p1_c] = genotype.board[p2_r, p2_c]

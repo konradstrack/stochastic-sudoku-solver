@@ -2,12 +2,15 @@ import argparse
 import configparser
 import sys
 
-from algorithm import GeneticAlgorithm
+from algorithm import GeneticAlgorithm, HierarchicalAlgorithm
 from board import Board
 from registry import registry
 from generator import BaseBoardGenerator
-from genotype import BoardGenotype
 
+import mutation
+import selection
+import evaluation
+import crossover
 
 def read_board(board_path):
     with open(board_path, 'r') as f:
@@ -68,27 +71,29 @@ if __name__ == "__main__":
     board_path = args.boardFile
     board = read_board(board_path)
 
+
     # generate more boards
     base_boards = [board]
     board_generator = BaseBoardGenerator(base_boards)
     board_list = board_generator.generate(100, 0.4)
-
-    # create population
-    population = [BoardGenotype(board) for board in board_list]
 
     evaluation_cls = configuration['evaluation']
     selection_cls = configuration['selection']
     crossover_cls = configuration['crossover']
     mutation_cls = configuration['mutation']
 
-    algorithm = GeneticAlgorithm(population=population,
-                                 evaluation=evaluation_cls(),
-                                 crossover=crossover_cls(len(population)),
-                                 mutation=mutation_cls(),
-                                 selection=selection_cls(),
-                                 steps=configuration['genetic_steps'])
-    output_population = algorithm.execute()
+    genetic_algorithm = GeneticAlgorithm(evaluation=evaluation_cls(),
+                                         crossover=crossover_cls(len(board_list)),
+                                         mutation=mutation_cls(),
+                                         selection=selection_cls())
 
-    for p in output_population[:10]:
-        print()
-        print(p.board)
+    hierarchical_algorithm = HierarchicalAlgorithm(genetic_algorithm)
+
+    genetic_steps = configuration['genetic_steps']
+    output_population, solution = hierarchical_algorithm.execute(board_list, genetic_steps=genetic_steps)
+
+    print("Initial board used to generate the population:\n{0}\n".format(board))
+    print("Found solution:\n{0}".format(solution))
+    # for p in output_population:
+    #     print()
+    #     print(p.board)
