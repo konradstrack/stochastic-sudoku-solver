@@ -41,10 +41,23 @@ class SumEvaluation():
             col_sum = np.sum(col)
             error += (perfect_sum - col_sum) ** 2
 
+        for i in range(rows * cols / 9):
+            (r, c) = board.get_square_indices(i)
+            square = board.get_square(r, c)
+            square_sum = np.sum(square)
+            error += (perfect_sum - square_sum) ** 2
+
         error /= rows * 2
         error = sqrt(error)
 
         return error
+
+    def solution_fitness(self):
+        """
+        Fitness for the correct solution. 
+        We need average 0 difference for every row and column and square.
+        """
+        return None
 
 
 @register('evaluation', 'error')
@@ -80,5 +93,11 @@ class ErrorEvaluation():
                     area_errors += count - 1
 
         return area_errors
+
+    def solution_fitness(self):
+        """
+        Fitness for the correct solution. We need 0 errors.
+        """
+        return 0
 
 			
