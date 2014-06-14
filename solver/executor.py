@@ -46,12 +46,16 @@ def build_configuration(config_path):
     evaluation_cls = get_class('evaluation', 'mock')
     crossover_cls = get_class('crossover', 'mock')
 
+    # noinspection PyDictCreation
     configuration = {
         'mutation': mutation_cls,
         'selection': selection_cls,
         'evaluation': evaluation_cls,
         'crossover': crossover_cls
     }
+
+    # get other parameters
+    configuration['genetic_steps'] = int(alg_config.get('genetic_steps', 100))
 
     return configuration
 
@@ -67,14 +71,24 @@ if __name__ == "__main__":
     # generate more boards
     base_boards = [board]
     board_generator = BaseBoardGenerator(base_boards)
-    board_list = board_generator.generate(10, 0.4)
+    board_list = board_generator.generate(100, 0.4)
 
     # create population
     population = [BoardGenotype(board) for board in board_list]
 
-    algorithm = GeneticAlgorithm(population)
+    evaluation_cls = configuration['evaluation']
+    selection_cls = configuration['selection']
+    crossover_cls = configuration['crossover']
+    mutation_cls = configuration['mutation']
+
+    algorithm = GeneticAlgorithm(population=population,
+                                 evaluation=evaluation_cls(),
+                                 crossover=crossover_cls(len(population)),
+                                 mutation=mutation_cls(),
+                                 selection=selection_cls(),
+                                 steps=configuration['genetic_steps'])
     output_population = algorithm.execute()
 
-    for p in output_population:
+    for p in output_population[:10]:
         print()
         print(p.board)

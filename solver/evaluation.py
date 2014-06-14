@@ -60,7 +60,7 @@ class ErrorEvaluation():
         Assumes we are working on filled boards.
         """
         (rows, cols) = board.shape()
-        squares = rows * cols / 9
+        squares = rows * cols // 9
         errors = 0
 
         errors += self.__get_errors(board, board.get_row, rows)

@@ -44,7 +44,7 @@ class RowCrossover():
         return genotype
 
     def __area_function(self, split):
-        return lambda r, c: r < split
+        return lambda r_c: r_c[0] < split
 
 
 @register('crossover', 'column')
@@ -76,7 +76,7 @@ class ColumnCrossover():
         return genotype
 
     def __area_function(self, split):
-        return lambda r, c: c < split
+        return lambda r_c: r_c[1] < split
 
 
 @register('crossover', 'square')
@@ -116,7 +116,7 @@ class SquareCrossover():
         split_r, split_c = square_split
         split_r = split_r * 3
         split_c = split_c * 3
-        return lambda r, c: r < split_r or r < split_r + 3 and c < split_c
+        return lambda r_c: r_c[0] < split_r or r_c[0] < split_r + 3 and r_c[1] < split_c
 
 
 class InvariantsMerger(object):
@@ -129,7 +129,7 @@ class InvariantsMerger(object):
         Area_function returns true if given point p = (r,c) is in the first area and false otherwise.
         """
         invariants = {}
-        invariants.update({p: v for p, v in board1.invariants if area_function(p)})
-        invariants.update({p: v for p, v in board2.invariants if not area_function(p)})
+        invariants.update({p: v for p, v in board1.invariants.items() if area_function(p)})
+        invariants.update({p: v for p, v in board2.invariants.items() if not area_function(p)})
 
         return invariants

@@ -5,17 +5,23 @@ from selection import MockSelection
 
 
 class GeneticAlgorithm():
-    def __init__(self, population, steps=100):
+    def __init__(self, population, evaluation, selection, crossover, mutation, steps=100):
         self.steps = steps
         self.population = population
-        self.evaluation = SumEvaluation()
-        self.selection = MockSelection()
-        self.crossover = RowCrossover(len(population))
-        self.mutation = SingleSwapMutation(probability=0.4)
+        self.evaluation = evaluation
+        self.selection = selection
+        self.crossover = crossover
+        self.mutation = mutation
 
     def execute(self):
         for i in range(self.steps):
             self.execute_step(i)
+
+            print("=" * 100, i)
+            print("=" * 100)
+            for p in self.population[:3]:
+                print(p.board)
+                print()
 
         return self.population
 
