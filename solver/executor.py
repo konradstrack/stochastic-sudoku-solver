@@ -46,16 +46,19 @@ def build_configuration(config_path):
     evaluation_cls = get_class('evaluation', 'mock')
     crossover_cls = get_class('crossover', 'mock')
 
-    # noinspection PyDictCreation
     configuration = {
         'mutation': mutation_cls,
         'selection': selection_cls,
         'evaluation': evaluation_cls,
-        'crossover': crossover_cls
-    }
+        'crossover': crossover_cls,
 
-    # get other parameters
-    configuration['genetic_steps'] = int(alg_config.get('genetic_steps', 100))
+        'population_size': int(alg_config.get('population_size', 100)),
+        'genetic_steps': int(alg_config.get('genetic_steps', 100)),
+        'tournament_size': int(alg_config.get('tournament_size', 20)),
+        'number_of_tournaments': int(alg_config.get('number_of_tournaments', 40)),
+
+        'generator_fill_portion': float(alg_config.get('generator_fill_portion', 0.4))
+    }
 
     return configuration
 
@@ -68,20 +71,21 @@ if __name__ == "__main__":
     board_path = args.boardFile
     board = read_board(board_path)
 
+    population_size = configuration['population_size']
 
     # generate more boards
     base_boards = [board]
     board_generator = BaseBoardGenerator(base_boards)
-    board_list = board_generator.generate(100, 0.4)
+    board_list = board_generator.generate(population_size, configuration['generator_fill_portion'])
 
     evaluation_cls = configuration['evaluation']
     selection_cls = configuration['selection']
     crossover_cls = configuration['crossover']
     mutation_cls = configuration['mutation']
 
-    population_size = len(board_list)
     genetic_algorithm = GeneticAlgorithm(evaluation=evaluation_cls(),
-                                         selection=selection_cls(population_size // 2, 20),
+                                         selection=selection_cls(configuration['number_of_tournaments'],
+                                                                 configuration['tournament_size']),
                                          crossover=crossover_cls(population_size),
                                          mutation=mutation_cls())
 
