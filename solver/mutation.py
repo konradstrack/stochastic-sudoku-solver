@@ -2,7 +2,6 @@ import random
 
 import numpy
 
-from board import InvariantsFixer
 from registry import register
 
 
@@ -41,7 +40,7 @@ class SingleSwapMutation():
 
         invariants = set(genotype.invariants.keys())
         fields = set((r, c) for r in range(rows) for c in range(cols))
-        
+
         # If everything is invariant, there is nothing to swap.
         if len(fields) - len(invariants) < 2:
             return
@@ -49,7 +48,6 @@ class SingleSwapMutation():
         (p1, p2) = random.sample(fields - invariants, 2)
         (p1_r, p1_c) = p1
         (p2_r, p2_c) = p2
-
 
         tmp = genotype.board[p1_r, p1_c]
         genotype.board[p1_r, p1_c] = genotype.board[p2_r, p2_c]
@@ -69,7 +67,7 @@ class SingleRowSwapMutation():
         for genotype in population:
             if random.random() < self.probability:
                 self.__mutate(genotype)
-                InvariantsFixer.fix_invariants(genotype)
+                genotype.board.fix_invariants()
 
     def __mutate(self, genotype):
         (rows, cols) = genotype.board.shape()
@@ -93,7 +91,7 @@ class SingleColumnSwapMutation():
         for genotype in population:
             if random.random() < self.probability:
                 self.__mutate(genotype)
-                InvariantsFixer.fix_invariants(genotype)
+                genotype.board.fix_invariants()
 
     def __mutate(self, genotype):
         (rows, cols) = genotype.board.shape()
@@ -116,11 +114,11 @@ class SingleSquareSwapMutation():
         for genotype in population:
             if random.random() < self.probability:
                 self.__mutate(genotype)
-                InvariantsFixer.fix_invariants(genotype)
+                genotype.board.fix_invariants()
 
     def __mutate(self, genotype):
         (rows, cols) = genotype.board.shape()
-        (s1, s2) = random.sample(range(rows / 3 * cols / 3), 2)
+        (s1, s2) = random.sample(range(rows // 3 * cols // 3), 2)
         (s1_r, s1_c) = genotype.board.get_square_indices(s1)
         (s2_r, s2_c) = genotype.board.get_square_indices(s2)
 

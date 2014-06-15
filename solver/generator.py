@@ -3,8 +3,6 @@ import random
 
 import numpy
 
-from solver.board import Board
-
 
 class BaseBoardGenerator(object):
     """

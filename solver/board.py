@@ -42,7 +42,7 @@ class Board():
 
     def set_row(self, row_number, row):
         for i in range(self.shape()[1]):
-            self._board[row_number, i] = row[i] 
+            self._board[row_number, i] = row[i]
 
     def set_column(self, col_number, col):
         for i in range(self.shape()[0]):
@@ -53,12 +53,12 @@ class Board():
         c1 = col * 3
         for i in range(3):
             for j in range(3):
-                self._board[r1 + i, c1 + j] = square[i,j]
+                self._board[r1 + i, c1 + j] = square[i, j]
 
     def set_invariants(self):
         """Sets invariants to current setting."""
         (rows, cols) = self.shape()
-        self.invariants = {(r, c) : self[r,c] for r in range(rows) for c in range(cols) if self[r,c] != 0}
+        self.invariants = {(r, c): self[r, c] for r in range(rows) for c in range(cols) if self[r, c] != 0}
 
     def get_square_indices(self, i):
         '''Row and column indices for a square with number i.
@@ -89,8 +89,6 @@ class Board():
 
         return '\n'.join(rows)
 
-class InvariantsFixer(object):
-    @staticmethod
-    def fix_invariants(genotype):
-        for (r, c), val in genotype.invariants.items():
-            genotype[r][c] = val
+    def fix_invariants(self):
+        for (r, c), val in self.invariants.items():
+            self[r, c] = val
