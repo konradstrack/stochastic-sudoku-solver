@@ -44,8 +44,10 @@ class GeneticAlgorithm():
                 return genotype
         return None
 
-    def find_best_fitness(self, population):
-        return min(population, key=lambda p: p.fitness)
+    @staticmethod
+    def find_best_fitness(population):
+        select_fitness = lambda p: p.fitness if p.fitness is not None else 1e5
+        return min(population, key=select_fitness)
 
 
 class HierarchicalAlgorithm():

@@ -61,21 +61,21 @@ class Board():
         self.invariants = {(r, c): self[r, c] for r in range(rows) for c in range(cols) if self[r, c] != 0}
 
     def get_square_indices(self, i):
-        '''Row and column indices for a square with number i.
+        """Row and column indices for a square with number i.
         The numbering of the squares goes:
         [0|1|2]
         [3|4|5]
-        [6|7|8]'''
-        return (i / 3, i % 3)
+        [6|7|8]"""
+        return i // 3, i % 3
 
     def get_indices(self, i):
-        '''Row and column indices for field with number i.
+        """Row and column indices for field with number i.
         The numbering of the fields goes:
         [0 | 1|..| 8]
         [9 |10|..|17]
         [     ..    ]
-        [72|73|..|80]'''
-        return (i / self.shape()[1], i % self.shape()[1])
+        [72|73|..|80]"""
+        return i // self.shape()[1], i % self.shape()[1]
 
     def __str__(self):
         rows = []
