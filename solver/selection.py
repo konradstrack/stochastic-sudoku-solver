@@ -24,7 +24,7 @@ class TournamentSelection():
         population[:] = []
         for i in range(self.tournaments_number):
             sample = random.sample(p, self.tournament_size)
-            winner = max(sample, key=lambda genotype: genotype.fitness)
+            winner = min(sample, key=lambda genotype: genotype.fitness)
             population.append(winner)
             p.remove(winner)
 
