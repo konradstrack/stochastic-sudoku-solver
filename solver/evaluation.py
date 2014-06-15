@@ -57,7 +57,7 @@ class SumEvaluation():
         Fitness for the correct solution. 
         We need average 0 difference for every row and column and square.
         """
-        return None
+        return 0
 
 
 @register('evaluation', 'error')
