@@ -57,7 +57,9 @@ def build_configuration(config_path):
         'tournament_size': int(alg_config.get('tournament_size', 20)),
         'number_of_tournaments': int(alg_config.get('number_of_tournaments', 40)),
 
-        'generator_fill_portion': float(alg_config.get('generator_fill_portion', 0.4))
+        'generator_fill_portion': float(alg_config.get('generator_fill_portion', 0.4)),
+
+        'mutation_probability': float(alg_config.get('mutation_probability', 0.8))
     }
 
     return configuration
@@ -87,7 +89,7 @@ if __name__ == "__main__":
                                          selection=selection_cls(configuration['number_of_tournaments'],
                                                                  configuration['tournament_size']),
                                          crossover=crossover_cls(population_size),
-                                         mutation=mutation_cls())
+                                         mutation=mutation_cls(configuration['mutation_probability']))
 
     hierarchical_algorithm = HierarchicalAlgorithm(genetic_algorithm)
 
