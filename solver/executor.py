@@ -7,10 +7,7 @@ from board import Board
 from registry import registry
 from generator import BaseBoardGenerator
 
-import mutation
-import selection
-import evaluation
-import crossover
+import mutation, selection, evaluation, crossover
 
 def read_board(board_path):
     with open(board_path, 'r') as f:
@@ -82,18 +79,29 @@ if __name__ == "__main__":
     crossover_cls = configuration['crossover']
     mutation_cls = configuration['mutation']
 
+    population_size = len(board_list)
     genetic_algorithm = GeneticAlgorithm(evaluation=evaluation_cls(),
-                                         crossover=crossover_cls(len(board_list)),
-                                         mutation=mutation_cls(),
-                                         selection=selection_cls())
+                                         selection=selection_cls(population_size // 2, 20),
+                                         crossover=crossover_cls(population_size),
+                                         mutation=mutation_cls())
 
     hierarchical_algorithm = HierarchicalAlgorithm(genetic_algorithm)
 
     genetic_steps = configuration['genetic_steps']
     output_population, solution = hierarchical_algorithm.execute(board_list, genetic_steps=genetic_steps)
 
+    print("=" * 100)
+    print("5 best boards:")
+    sort_by_fitness = lambda p: p.fitness if p.fitness is not None else 100
+    for p in sorted(output_population, key=sort_by_fitness, reverse=True)[-5:]:
+        print(p.board, p.fitness)
+        print()
+
+    print("=" * 100)
     print("Initial board used to generate the population:\n{0}\n".format(board))
-    print("Found solution:\n{0}".format(solution))
-    # for p in output_population:
-    #     print()
-    #     print(p.board)
+
+    if solution is not None:
+        print("Found solution:\n{0} {1}".format(solution.board, solution.fitness))
+    else:
+        print("No solution.")
+

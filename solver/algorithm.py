@@ -27,6 +27,10 @@ class GeneticAlgorithm():
 
     def execute_step(self, i):
         self.evaluation.process(self.population)
+
+        best = self.find_best_fitness(self.population)
+        print("Best fitness in iteration {0}: {1}".format(i, best.fitness))
+
         self.selection.process(self.population)
         self.crossover.process(self.population)
         self.mutation.process(self.population)
@@ -39,6 +43,9 @@ class GeneticAlgorithm():
             if genotype.fitness == self.evaluation.solution_fitness():
                 return genotype
         return None
+
+    def find_best_fitness(self, population):
+        return min(population, key=lambda p: p.fitness)
 
 
 class HierarchicalAlgorithm():

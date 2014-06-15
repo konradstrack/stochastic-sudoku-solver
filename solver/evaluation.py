@@ -41,7 +41,7 @@ class SumEvaluation():
             col_sum = np.sum(col)
             error += (perfect_sum - col_sum) ** 2
 
-        for i in range(rows * cols / 9):
+        for i in range(rows * cols // 9):
             (r, c) = board.get_square_indices(i)
             square = board.get_square(r, c)
             square_sum = np.sum(square)
