@@ -1,6 +1,7 @@
 import argparse
 import configparser
 import sys
+import numpy
 
 from algorithm import GeneticAlgorithm, HierarchicalAlgorithm, generate_population
 from board import Board
@@ -89,10 +90,14 @@ if __name__ == "__main__":
                                          mutation=mutation_cls(configuration['mutation_probability']))
 
     # print configuration for the current invocation
+    rows, cols = board.shape()
+    board_fill = sum(1 for r in range(rows) for c in range(cols) if board[r, c] != 0)
+
     print(population_size,
           configuration['number_of_tournaments'],
           configuration['tournament_size'],
-          configuration['mutation_probability'])
+          configuration['mutation_probability'],
+          board_fill)
 
     genetic_steps = configuration['genetic_steps']
     if configuration['use_genetic_only']:
