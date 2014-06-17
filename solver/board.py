@@ -1,3 +1,5 @@
+import re
+
 __author__ = 'Konrad Strack'
 
 import numpy as np
@@ -78,13 +80,30 @@ class Board():
         return i // self.shape()[1], i % self.shape()[1]
 
     def __str__(self):
+
+        colors = {
+            '1': '\033[31m',
+            '2': '\033[32m',
+            '3': '\033[33m',
+            '4': '\033[34m',
+            '5': '\033[35m',
+            '6': '\033[36m',
+            '7': '\033[37m',
+            '8': '\033[92m',
+            '9': '\033[39m',
+        }
+
+        def colored(digit):
+            return colors[str(digit)] + str(digit) + '\033[0m'
+
         rows = []
         for r, row in enumerate(self._board):
             if not r % 3 and r in range(1, 8):
                 rows.append('-' * 11)
 
             parts = zip(*[iter(row)] * 3)
-            str_parts = ["{0}{1}{2}".format(*part) for part in parts]
+
+            str_parts = ["{0}{1}{2}".format(colored(part[0]), colored(part[1]), colored(part[2])) for part in parts]
             rows.append('|'.join(str_parts))
 
         return '\n'.join(rows)

@@ -2,7 +2,7 @@ import argparse
 import configparser
 import sys
 
-from algorithm import GeneticAlgorithm, HierarchicalAlgorithm
+from algorithm import GeneticAlgorithm, HierarchicalAlgorithm, generate_population
 from board import Board
 from registry import registry
 from generator import BaseBoardGenerator
@@ -47,19 +47,21 @@ def build_configuration(config_path):
     crossover_cls = get_class('crossover', 'mock')
 
     configuration = {
+        'use_genetic_only': alg_config.getboolean('use_genetic_only', False),
+
         'mutation': mutation_cls,
         'selection': selection_cls,
         'evaluation': evaluation_cls,
         'crossover': crossover_cls,
 
-        'population_size': int(alg_config.get('population_size', 100)),
-        'genetic_steps': int(alg_config.get('genetic_steps', 100)),
-        'tournament_size': int(alg_config.get('tournament_size', 20)),
-        'number_of_tournaments': int(alg_config.get('number_of_tournaments', 40)),
+        'population_size': alg_config.getint('population_size', 100),
+        'genetic_steps': alg_config.getint('genetic_steps', 100),
+        'tournament_size': alg_config.getint('tournament_size', 20),
+        'number_of_tournaments': alg_config.getint('number_of_tournaments', 40),
 
-        'generator_fill_portion': float(alg_config.get('generator_fill_portion', 0.4)),
+        'generator_fill_portion': alg_config.getfloat('generator_fill_portion', 0.4),
 
-        'mutation_probability': float(alg_config.get('mutation_probability', 0.8))
+        'mutation_probability': alg_config.getfloat('mutation_probability', 0.8)
     }
 
     return configuration
@@ -75,11 +77,6 @@ if __name__ == "__main__":
 
     population_size = configuration['population_size']
 
-    # generate more boards
-    base_boards = [board]
-    board_generator = BaseBoardGenerator(base_boards)
-    board_list = board_generator.generate(population_size, configuration['generator_fill_portion'])
-
     evaluation_cls = configuration['evaluation']
     selection_cls = configuration['selection']
     crossover_cls = configuration['crossover']
@@ -91,10 +88,13 @@ if __name__ == "__main__":
                                          crossover=crossover_cls(population_size),
                                          mutation=mutation_cls(configuration['mutation_probability']))
 
-    hierarchical_algorithm = HierarchicalAlgorithm(genetic_algorithm)
-
     genetic_steps = configuration['genetic_steps']
-    output_population, solution = hierarchical_algorithm.execute(board_list, genetic_steps=genetic_steps)
+    if configuration['use_genetic_only']:
+        population = generate_population(board, population_size)
+        output_population, solution = genetic_algorithm.execute(population, genetic_steps)
+    else:
+        hierarchical_algorithm = HierarchicalAlgorithm(genetic_algorithm)
+        output_population, solution = hierarchical_algorithm.execute(board, genetic_steps=genetic_steps)
 
     print("=" * 100)
     print("5 best boards:")

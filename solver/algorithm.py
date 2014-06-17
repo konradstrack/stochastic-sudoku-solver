@@ -1,3 +1,4 @@
+from copy import copy
 from random import Random
 
 from genotype import BoardGenotype
@@ -54,18 +55,35 @@ class HierarchicalAlgorithm():
     def __init__(self, genetic):
         self.genetic = genetic
 
-    def execute(self, boards, genetic_steps):
-        random = Random()
+    def execute(self, board, genetic_steps):
+        # TODO: construct the population, @see generate_population method
+        boards = [board]
 
-        def random_fill(genotype):
-            (rows, cols) = genotype.shape()
-            for r in range(rows):
-                for c in range(cols):
-                    if genotype[r, c] == 0:
-                        genotype[r, c] = random.randint(1, 9)
-            return genotype
+        boards = map(random_fill, boards)
 
         # self.boards = itertools.chain(*(map(logic.fill, self.boards)))
-        boards = map(random_fill, boards)
         population = [BoardGenotype(board) for board in boards]
         return self.genetic.execute(population=population, steps=genetic_steps)
+
+
+random = Random()
+
+
+def random_fill(genotype):
+    (rows, cols) = genotype.shape()
+    for r in range(rows):
+        for c in range(cols):
+            if genotype[r, c] == 0:
+                genotype[r, c] = random.randint(1, 9)
+    return genotype
+
+
+def generate_population(board, size):
+    boards = []
+    for _ in range(size):
+        boards.append(copy(board))
+
+    filled = map(random_fill, boards)
+    population = [BoardGenotype(board) for board in filled]
+
+    return population
