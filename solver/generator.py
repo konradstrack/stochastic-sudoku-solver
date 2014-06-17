@@ -1,7 +1,10 @@
+import argparse
 import copy
 import random
 
 import numpy
+
+from board import Board
 
 
 class BaseBoardGenerator(object):
@@ -98,3 +101,22 @@ class BaseBoardGenerator(object):
 
         for i, row in enumerate(permute):
             board.set_row(begin + i, rows[row])
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Sudoku board generator')
+    parser.add_argument('-b', '--boardFile', help='fully solved board used for generation', required=True)
+    parser.add_argument('-f', '--fill', type=float, help='fill percentage (0. - 1.)', required=True)
+
+    args = parser.parse_args()
+
+    with open(args.boardFile, 'r') as f:
+        lines = f.readlines()
+
+    board = Board(lines)
+
+    generator = BaseBoardGenerator([board])
+    gen_board = generator.generate(1, fill_portion=args.fill)[0]
+
+    for r, row in enumerate(gen_board):
+        print(''.join(map(str, row)))
