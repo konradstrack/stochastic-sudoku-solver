@@ -5,9 +5,8 @@ import sys
 from algorithm import GeneticAlgorithm, HierarchicalAlgorithm, generate_population
 from board import Board
 from registry import registry
-from generator import BaseBoardGenerator
 
-import mutation, selection, evaluation, crossover
+
 
 def read_board(board_path):
     with open(board_path, 'r') as f:
@@ -34,6 +33,7 @@ def build_configuration(config_path):
     def get_class(group, default):
         name = alg_config.get(group, default)
         try:
+            __import__(group)
             cls = registry[group][name]
             return cls
         except KeyError as e:
@@ -88,6 +88,12 @@ if __name__ == "__main__":
                                          crossover=crossover_cls(population_size),
                                          mutation=mutation_cls(configuration['mutation_probability']))
 
+    # print configuration for the current invocation
+    print(population_size,
+          configuration['number_of_tournaments'],
+          configuration['tournament_size'],
+          configuration['mutation_probability'])
+
     genetic_steps = configuration['genetic_steps']
     if configuration['use_genetic_only']:
         population = generate_population(board, population_size)
@@ -96,18 +102,18 @@ if __name__ == "__main__":
         hierarchical_algorithm = HierarchicalAlgorithm(genetic_algorithm)
         output_population, solution = hierarchical_algorithm.execute(board, genetic_steps=genetic_steps)
 
-    print("=" * 100)
-    print("5 best boards:")
+    print("=" * 100, file=sys.stderr)
+    print("5 best boards:", file=sys.stderr)
     sort_by_fitness = lambda p: p.fitness if p.fitness is not None else 100
     for p in sorted(output_population, key=sort_by_fitness, reverse=True)[-5:]:
-        print(p.board, p.fitness)
-        print()
+        print(p.board, p.fitness, file=sys.stderr)
+        print(file=sys.stderr)
 
-    print("=" * 100)
-    print("Initial board:\n{0}\n".format(board))
+    print("=" * 100, file=sys.stderr)
+    print("Initial board:\n{0}\n".format(board), file=sys.stderr)
 
     if solution is not None:
-        print("Found solution:\n{0} {1}".format(solution.board, solution.fitness))
+        print("Found solution:\n{0} {1}".format(solution.board, solution.fitness), file=sys.stderr)
     else:
-        print("No solution.")
+        print("No solution.", file=sys.stderr)
 

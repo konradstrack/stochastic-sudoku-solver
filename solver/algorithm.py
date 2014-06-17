@@ -1,5 +1,7 @@
 from copy import copy
 from random import Random
+import sys
+import numpy
 
 from genotype import BoardGenotype
 
@@ -19,7 +21,7 @@ class GeneticAlgorithm():
         self.evaluation.process(self.population)
 
         for i in range(steps):
-            self.execute_step(i)
+            self.execute_step(i+1)
             solution = self.find_solution(self.population)
             if solution is not None:
                 break
@@ -30,7 +32,13 @@ class GeneticAlgorithm():
         self.evaluation.process(self.population)
 
         best = self.find_best_fitness(self.population)
-        print("Best fitness in iteration {0}: {1}".format(i, best.fitness))
+
+        fitnesses = [p.fitness for p in self.population]
+        fitness_avg = numpy.mean(fitnesses)
+        fitness_stddev = numpy.std(fitnesses)
+
+        print("Best fitness in iteration {0}: {1} {2} {3}".format(i, best.fitness, fitness_avg, fitness_stddev), file=sys.stderr)
+        print("{0}\t{1}\t{2}\t{3}".format(i, best.fitness, fitness_avg, fitness_stddev))
 
         self.selection.process(self.population)
         self.crossover.process(self.population)
