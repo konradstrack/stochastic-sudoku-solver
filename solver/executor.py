@@ -104,7 +104,7 @@ if __name__ == "__main__":
         print()
 
     print("=" * 100)
-    print("Initial board used to generate the population:\n{0}\n".format(board))
+    print("Initial board:\n{0}\n".format(board))
 
     if solution is not None:
         print("Found solution:\n{0} {1}".format(solution.board, solution.fitness))

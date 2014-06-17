@@ -81,9 +81,9 @@ def random_fill(genotype):
 def generate_population(board, size):
     boards = []
     for _ in range(size):
-        boards.append(copy(board))
+        boards.append(board.copy())
 
     filled = map(random_fill, boards)
-    population = [BoardGenotype(board) for board in filled]
+    population = [BoardGenotype(b) for b in filled]
 
     return population

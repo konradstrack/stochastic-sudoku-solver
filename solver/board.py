@@ -1,3 +1,4 @@
+import copy
 import re
 
 __author__ = 'Konrad Strack'
@@ -111,3 +112,6 @@ class Board():
     def fix_invariants(self):
         for (r, c), val in self.invariants.items():
             self[r, c] = val
+
+    def copy(self):
+        return copy.deepcopy(self)
