@@ -14,7 +14,7 @@ class Board():
         if initial_board is not None:
             for r, row in enumerate(initial_board[:9]):
                 for c, col in enumerate(row[:9]):
-                    if col != 0:
+                    if int(col) != 0:
                         self.invariants[(r, c)] = col
                         self._board[r, c] = col
 

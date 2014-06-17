@@ -54,7 +54,7 @@ def fill_one(board, uncertainty=1):
                 if 0 < len(missing) <= uncertainty:
                     take = len(missing)
                     for field_value in random.sample(list(missing), take):
-                        new_board = copy(board)
+                        new_board = board.copy()
                         new_board[r, c] = field_value
 
                         boards.append(new_board)

@@ -1,3 +1,4 @@
+from collections import defaultdict
 from math import sqrt
 
 import numpy as np
@@ -80,7 +81,7 @@ class ErrorEvaluation():
         errors += self.__get_errors(board, board.get_column, cols)
         errors += self.__get_errors(board, lambda i: board.get_square(*board.get_square_indices(i)), squares)
 
-        errors /= (rows + cols + squares) * 1.
+        # errors /= (rows + cols + squares) * 1.
         return errors
 
     def __get_errors(self, board, get_area, num_areas):
@@ -94,10 +95,70 @@ class ErrorEvaluation():
 
         return area_errors
 
-    def solution_fitness(self):
+    @staticmethod
+    def solution_fitness():
         """
         Fitness for the correct solution. We need 0 errors.
         """
         return 0
 
-			
+
+@register('evaluation', 'error-new')
+class SecondErrorEvaluation():
+    def process(self, population):
+        for genotype in population:
+            genotype.fitness = self.__evaluate(genotype.board)
+
+    @staticmethod
+    def __evaluate(board):
+        """
+        Evaluation based on number of errors (multiple values of same number)
+        (for a correct filling) and actual sum in columns, rows and squares.
+        Assumes we are working on filled boards.
+        """
+
+        errors = set()
+
+        def join_to_errors(indexes, errors):
+            for k, v in indexes.items():
+                if len(v) > 1:
+                    errors |= v
+
+            return errors
+
+        rows, cols = board.shape()
+
+        # rows
+        for r in range(rows):
+            indexes = defaultdict(set)
+            for c in range(cols):
+                indexes[board[r, c]].add((r, c))
+
+            join_to_errors(indexes, errors)
+
+        # cols
+        for c in range(cols):
+            indexes = defaultdict(set)
+            for r in range(rows):
+                indexes[board[r, c]].add((r, c))
+
+            join_to_errors(indexes, errors)
+
+        # squares
+        for sr in range(rows // 3):
+            for sc in range(cols // 3):
+                indexes = defaultdict(set)
+                for r in range(sr * 3, sr * 3 + 3):
+                    for c in range(sc * 3, sc * 3 + 3):
+                        indexes[board[r, c]].add((r, c))
+
+                join_to_errors(indexes, errors)
+
+        return len(errors)
+
+    @staticmethod
+    def solution_fitness():
+        """
+        Fitness for the correct solution. We need 0 errors.
+        """
+        return 0
