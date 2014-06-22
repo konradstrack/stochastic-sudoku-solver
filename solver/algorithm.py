@@ -4,6 +4,7 @@ import sys
 import numpy
 
 from genotype import BoardGenotype
+from logic import fill_steps
 
 
 class GeneticAlgorithm():
@@ -29,6 +30,7 @@ class GeneticAlgorithm():
         return population, solution
 
     def execute_step(self, i):
+
         self.evaluation.process(self.population)
 
         best = self.find_best_fitness(self.population)
@@ -60,18 +62,25 @@ class GeneticAlgorithm():
 
 
 class HierarchicalAlgorithm():
-    def __init__(self, genetic):
+    def __init__(self, genetic, population_size):
         self.genetic = genetic
+        self.population_size = population_size
 
     def execute(self, board, genetic_steps):
-        # TODO: construct the population, @see generate_population method
-        boards = [board]
 
-        boards = map(random_fill, boards)
+        boards = fill_steps(board, steps = 4)
 
-        # self.boards = itertools.chain(*(map(logic.fill, self.boards)))
-        population = [BoardGenotype(board) for board in boards]
-        return self.genetic.execute(population=population, steps=genetic_steps)
+        boards = boards[:self.population_size]
+
+        population = []
+        for b in boards:
+            population.extend(generate_population(b, self.population_size // len(boards)))
+
+        population.extend(generate_population(boards[-1], self.population_size % len(boards)))
+        
+        (output_population, solution) = self.genetic.execute(population=population, steps=genetic_steps)
+
+        return (output_population, solution)
 
 
 random = Random()

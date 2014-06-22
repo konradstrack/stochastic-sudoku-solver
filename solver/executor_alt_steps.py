@@ -3,7 +3,8 @@ import configparser
 import sys
 import numpy
 
-from algorithm import GeneticAlgorithm, HierarchicalAlgorithm, generate_population
+from algorithm import GeneticAlgorithm, generate_population
+from algorithm_alt import HierarchicalAlgorithm
 from board import Board
 from registry import registry
 
@@ -105,7 +106,7 @@ if __name__ == "__main__":
         output_population, solution = genetic_algorithm.execute(population, genetic_steps)
     else:
         hierarchical_algorithm = HierarchicalAlgorithm(genetic_algorithm, population_size)
-        output_population, solution = hierarchical_algorithm.execute(board, genetic_steps=genetic_steps)
+        output_population, solution = hierarchical_algorithm.execute_iterated_another(board, genetic_steps=genetic_steps)
 
     print("=" * 100, file=sys.stderr)
     print("5 best boards:", file=sys.stderr)
