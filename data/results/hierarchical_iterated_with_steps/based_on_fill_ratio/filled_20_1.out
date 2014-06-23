@@ -1,0 +1,1 @@
+python3 solver/executor_alt_steps.py -b data/input_boards/filled_20_1.txt -f hierarchical_config.ini

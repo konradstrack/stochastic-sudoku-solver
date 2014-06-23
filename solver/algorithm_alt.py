@@ -28,7 +28,7 @@ class HierarchicalAlgorithm():
 
         return (output_population, solution)
 
-    def execute_iterated(self, board, genetic_steps, hierarchical_steps = 20):
+    def execute_iterated(self, board, genetic_steps, hierarchical_steps = 10):
 
         first_boards = fill_steps(board, steps = 3)
 
@@ -60,9 +60,9 @@ class HierarchicalAlgorithm():
                 b.fix_invariants()
             top_solution_boards.extend(boards)
 
-        return (solution, output_population)
+        return (output_population, solution)
 
-    def execute_iterated_another(self, board, genetic_steps, hierarchical_steps = 20):
+    def execute_iterated_another(self, board, genetic_steps, hierarchical_steps = 10):
 
         first_boards = fill_steps(board, steps = 1)
 
@@ -102,6 +102,6 @@ class HierarchicalAlgorithm():
 
             boards = top_solution_boards
 
-        return (solution, output_population)
+        return (output_population, solution)
 
 random = Random()
